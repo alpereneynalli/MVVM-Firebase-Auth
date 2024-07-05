@@ -38,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import net.firebase_auth.R
 import net.firebase_auth.navigation.ROUTE_HOME
 import net.firebase_auth.navigation.ROUTE_LOGIN
+import net.firebase_auth.navigation.ROUTE_SIGNUP
 import net.firebase_auth.ui.common.composables.AuthHeader
 import net.firebase_auth.ui.theme.AppTheme
 import net.firebase_auth.ui.theme.spacing
@@ -58,7 +59,7 @@ fun SignupScreen(
         when (authState?.value) {
             is AuthState.Authenticated -> {
                 navController.navigate(ROUTE_HOME) {
-                    popUpTo(ROUTE_HOME) { inclusive = true }
+                    popUpTo(ROUTE_SIGNUP) { inclusive = true }
                 }
             }
 
@@ -70,6 +71,7 @@ fun SignupScreen(
                 ).show()
                 viewModel.resetErrorState()
             }
+
             else -> Unit
         }
     }

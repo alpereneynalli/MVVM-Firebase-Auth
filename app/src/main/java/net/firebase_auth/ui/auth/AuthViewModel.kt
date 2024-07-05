@@ -1,6 +1,5 @@
 package net.firebase_auth.ui.auth
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,32 +7,36 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import net.firebase_auth.data.AuthRepository
-import net.firebase_auth.data.AuthRepositoryImpl
+import net.firebase_auth.domain.use_case.GetCurrentUserUseCase
+import net.firebase_auth.domain.use_case.LogInUserUseCase
+import net.firebase_auth.domain.use_case.LogOutUserUseCase
+import net.firebase_auth.domain.use_case.SignUpUserUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val logInUserUseCase: LogInUserUseCase,
+    private val logOutUserUseCase: LogOutUserUseCase,
+    private val signUpUserUseCase: SignUpUserUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel() {
 
     private val _authState = MutableLiveData<AuthState?>()
     val authState: LiveData<AuthState?> = _authState
 
-    val currentUser: FirebaseUser?
-        get() = authRepository.currentUser
-
     init {
         checkAuthStatus()
     }
 
-    private fun checkAuthStatus() {
-        if (currentUser != null) {
+    fun currentUser(): FirebaseUser? {
+        return getCurrentUserUseCase()
+    }
+
+    fun checkAuthStatus() {
+        if (currentUser() != null) {
             _authState.value = AuthState.Authenticated
-            Log.d("AuthViewModel", "User is authenticated")
         } else {
             _authState.value = AuthState.Unauthenticated
-            Log.d("AuthViewModel", "User is unauthorized")
         }
     }
 
@@ -46,22 +49,19 @@ class AuthViewModel @Inject constructor(
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            val result = authRepository.login(email, password)
-            _authState.value = result
+            _authState.value = logInUserUseCase(email, password)
         }
     }
 
     fun signUp(name: String, email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            val result = authRepository.signup(name, email, password)
-            _authState.value = result
+            _authState.value = signUpUserUseCase(name, email, password)
         }
     }
 
     fun logout() {
-        authRepository.logout()
-        _authState.value = AuthState.Unauthenticated
+        _authState.value = logOutUserUseCase()
     }
 
 }

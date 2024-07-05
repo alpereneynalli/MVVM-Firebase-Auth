@@ -42,7 +42,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavHostController) {
         when (authState?.value) {
             is AuthState.Unauthenticated -> {
                 navController.navigate(ROUTE_LOGIN) {
-                    popUpTo(ROUTE_LOGIN) { inclusive = true }
+                    popUpTo(ROUTE_HOME) { inclusive = true }
                 }
             }
 
@@ -74,7 +74,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavHostController) {
         )
 
         Text(
-            text = viewModel?.currentUser?.displayName?: "",
+            text = viewModel?.currentUser()?.displayName ?: "",
             style = MaterialTheme.typography.displaySmall,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -95,9 +95,6 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavHostController) {
             Button(
                 onClick = {
                     viewModel?.logout()
-                    navController.navigate(ROUTE_LOGIN) {
-                        popUpTo(ROUTE_LOGIN) { inclusive = true }
-                    }
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)

@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import net.firebase_auth.R
 import net.firebase_auth.navigation.ROUTE_HOME
+import net.firebase_auth.navigation.ROUTE_LOGIN
 import net.firebase_auth.navigation.ROUTE_SIGNUP
 import net.firebase_auth.ui.common.composables.AuthHeader
 import net.firebase_auth.ui.theme.AppTheme
@@ -53,7 +54,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
         when (authState?.value) {
             is AuthState.Authenticated -> {
                 navController.navigate(ROUTE_HOME) {
-                    popUpTo(ROUTE_HOME) { inclusive = true }
+                    popUpTo(ROUTE_LOGIN) { inclusive = true }
                 }
             }
 
@@ -163,7 +164,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 }
                 .clickable {
                     navController.navigate(ROUTE_SIGNUP) {
-                        popUpTo(ROUTE_SIGNUP) { inclusive = true }
+                        popUpTo(ROUTE_LOGIN) { inclusive = true }
                     }
                 },
             text = stringResource(id = R.string.dont_have_account),
