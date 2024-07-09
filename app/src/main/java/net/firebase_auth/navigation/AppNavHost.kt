@@ -26,13 +26,36 @@ fun AppNavHost(
         startDestination = if (viewModel.authState.value is AuthState.Authenticated) ROUTE_HOME else ROUTE_LOGIN
     ) {
         composable(ROUTE_LOGIN) {
-            LoginScreen(viewModel, navController)
+            LoginScreen(viewModel, navToHomePage = {
+                navController.navigate(ROUTE_HOME) {
+                    popUpTo(ROUTE_SIGNUP) { inclusive = true }
+                }
+            }, navToSignUpPage = {
+                navController.navigate(ROUTE_SIGNUP) {
+                    popUpTo(ROUTE_LOGIN) { inclusive = true }
+                }
+            })
         }
         composable(ROUTE_SIGNUP) {
-            SignupScreen(viewModel, navController)
+            SignupScreen(viewModel,
+                navToHomePage = {
+                    navController.navigate(ROUTE_HOME) {
+                        popUpTo(ROUTE_SIGNUP) { inclusive = true }
+                    }
+                },
+                navToLoginPage = {
+                    navController.navigate(ROUTE_LOGIN) {
+                        popUpTo(ROUTE_SIGNUP) { inclusive = true }
+                    }
+                })
         }
         composable(ROUTE_HOME) {
-            HomeScreen(viewModel, navController)
+            HomeScreen(viewModel,
+                navToLoginPage = {
+                    navController.navigate(ROUTE_LOGIN) {
+                        popUpTo(ROUTE_HOME) { inclusive = true }
+                    }
+                })
         }
     }
 }

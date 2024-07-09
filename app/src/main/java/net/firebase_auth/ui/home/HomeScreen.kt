@@ -32,18 +32,16 @@ import net.firebase_auth.ui.theme.AppTheme
 import net.firebase_auth.ui.theme.spacing
 
 @Composable
-fun HomeScreen(viewModel: AuthViewModel?, navController: NavHostController) {
+fun HomeScreen(viewModel: AuthViewModel?,
+               navToLoginPage: () -> Unit){
     val spacing = MaterialTheme.spacing
     val authState = viewModel?.authState?.observeAsState()
     val context = LocalContext.current
 
-
     LaunchedEffect(authState?.value) {
         when (authState?.value) {
             is AuthState.Unauthenticated -> {
-                navController.navigate(ROUTE_LOGIN) {
-                    popUpTo(ROUTE_HOME) { inclusive = true }
-                }
+                navToLoginPage.invoke()
             }
 
             is AuthState.Error -> {
@@ -110,7 +108,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavHostController) {
 @Composable
 fun HomeScreenPreviewLight() {
     AppTheme {
-        HomeScreen(null, rememberNavController())
+        HomeScreen(null) { }
     }
 }
 
@@ -118,6 +116,6 @@ fun HomeScreenPreviewLight() {
 @Composable
 fun HomeScreenPreviewDark() {
     AppTheme {
-        HomeScreen(null, rememberNavController())
+        HomeScreen(null) { }
     }
 }

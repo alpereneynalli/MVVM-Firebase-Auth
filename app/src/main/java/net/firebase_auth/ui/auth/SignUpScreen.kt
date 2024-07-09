@@ -47,7 +47,8 @@ import net.firebase_auth.ui.theme.spacing
 @Composable
 fun SignupScreen(
     viewModel: AuthViewModel? = hiltViewModel(),
-    navController: NavHostController
+    navToHomePage: () -> Unit,
+    navToLoginPage: () -> Unit
 ) {
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
@@ -58,9 +59,7 @@ fun SignupScreen(
     LaunchedEffect(authState?.value) {
         when (authState?.value) {
             is AuthState.Authenticated -> {
-                navController.navigate(ROUTE_HOME) {
-                    popUpTo(ROUTE_SIGNUP) { inclusive = true }
-                }
+                navToHomePage.invoke()
             }
 
             is AuthState.Error -> {
@@ -189,9 +188,7 @@ fun SignupScreen(
                 }
                 .clickable {
                     viewModel?.resetErrorState()
-                    navController.navigate(ROUTE_LOGIN) {
-                        popUpTo(ROUTE_LOGIN) { inclusive = true }
-                    }
+                    navToLoginPage.invoke()
                 },
             text = stringResource(id = R.string.already_have_account),
             style = MaterialTheme.typography.bodyLarge,
@@ -215,7 +212,7 @@ fun SignupScreen(
 @Composable
 fun SignupScreenPreviewLight() {
     AppTheme {
-        SignupScreen(null, rememberNavController())
+        SignupScreen(null, {}, {})
     }
 }
 
@@ -223,6 +220,6 @@ fun SignupScreenPreviewLight() {
 @Composable
 fun SignupScreenPreviewDark() {
     AppTheme {
-        SignupScreen(null, rememberNavController())
+        SignupScreen(null, {}, {})
     }
 }

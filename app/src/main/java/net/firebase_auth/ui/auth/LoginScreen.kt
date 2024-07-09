@@ -44,7 +44,9 @@ import net.firebase_auth.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
+fun LoginScreen(viewModel: AuthViewModel?,
+                navToHomePage: () -> Unit,
+                navToSignUpPage: () -> Unit){
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val authState = viewModel?.authState?.observeAsState()
@@ -53,9 +55,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
     LaunchedEffect(authState?.value) {
         when (authState?.value) {
             is AuthState.Authenticated -> {
-                navController.navigate(ROUTE_HOME) {
-                    popUpTo(ROUTE_LOGIN) { inclusive = true }
-                }
+                navToHomePage.invoke()
             }
 
             is AuthState.Error -> {
@@ -163,9 +163,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                     end.linkTo(parent.end, spacing.extraLarge)
                 }
                 .clickable {
-                    navController.navigate(ROUTE_SIGNUP) {
-                        popUpTo(ROUTE_LOGIN) { inclusive = true }
-                    }
+                    navToSignUpPage.invoke()
                 },
             text = stringResource(id = R.string.dont_have_account),
             style = MaterialTheme.typography.bodyLarge,
@@ -188,7 +186,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
 @Composable
 fun LoginScreenPreviewLight() {
     AppTheme {
-        LoginScreen(null, rememberNavController())
+        LoginScreen(null, {}, {})
     }
 }
 
@@ -196,6 +194,6 @@ fun LoginScreenPreviewLight() {
 @Composable
 fun LoginScreenPreviewDark() {
     AppTheme {
-        LoginScreen(null, rememberNavController())
+        LoginScreen(null, {}, {})
     }
 }
